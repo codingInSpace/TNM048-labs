@@ -36,11 +36,20 @@ function sp(){
 
     //Load data
     d3.csv("data/OECD-better-life-index-hi.csv", function(error, data) {
+        if (error) console.log(error);
+
         self.data = data;
         
         //define the domain of the scatter plot axes
-        //...
-        
+        var yMax = d3.max(data, function(d) {
+          return d[0];
+        })
+        var xMax = d3.max(data, function(d) {
+          return d[1];
+        })
+        y.domain([0, yMax]);
+        x.domain([0, xMax]);
+
         draw();
 
     });
@@ -73,6 +82,12 @@ function sp(){
             .data(self.data)
             .enter().append("circle")
             .attr("class", "dot")
+            //.attr("cx", function(d) {
+            //  return x(d[0]);
+            //})
+            //.attr("cy", function(d) {
+            //  return y(d[1]);
+            //})
             //Define the x and y coordinate data values for the dots
             //...
             //tooltip
