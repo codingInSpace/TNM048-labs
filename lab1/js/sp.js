@@ -18,8 +18,8 @@ function sp(){
 
 //    var x = d3.scale.linear()
  //       .range([0, width]);
-    var x = d3.scale.ordinal()
-           .rangeRoundBands([0, width]);
+    var x = d3.scale.linear()
+           .range([0, width]);
 
     var y = d3.scale.linear()
         .range([height, 0]);
@@ -47,7 +47,10 @@ function sp(){
         //if (error) console.log(error);
         self.data = data;
 
-        x.domain(data.map(function(d) { return d.Country; }));
+        x.domain([
+            d3.min(data, function(d) { return d["Student skills"]; }),
+            d3.max(data, function(d) { return d["Student skills"]; })
+        ]);
         y.domain([
             d3.min(data, function(d) { return d["Household income"]; }),
             d3.max(data, function(d) { return d["Household income"]; })
@@ -79,9 +82,9 @@ function sp(){
         svg.append("text")
             .attr("transform",
                 "translate(" + (width/2) + " ," +
-                (height + margin.top + 50) + ")")
+                (height + margin.top + 20) + ")")
             .style("text-anchor", "middle")
-            .text("Country");
+            .text("Student skills");
 
         // Add y axis and title.
         svg.append("g")
@@ -111,7 +114,7 @@ function sp(){
                 return cc[d.Country];
             })
             .attr("cx", function(d) {
-              return x(d.Country);
+              return x(d["Student skills"]);
             })
             .attr("cy", function(d) {
               return y(d["Household income"]);
@@ -133,7 +136,7 @@ function sp(){
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
-                
+
                 highlight(d, false);
             })
             .on("click",  function(d) {
