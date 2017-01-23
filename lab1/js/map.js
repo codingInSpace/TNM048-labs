@@ -10,8 +10,16 @@ function map(){
         width = mapDiv.width() - margin.right - margin.left,
         height = mapDiv.height() - margin.top - margin.bottom;
 
+    // Initialize countries
+    var country;
+
+    var selectedCountry = "";
+
     //initialize color scale
     var c20c = d3.scale.category20c();
+
+    //initialize a color country object
+    var cc = {};
 
     //initialize tooltip
     //...
@@ -45,15 +53,11 @@ function map(){
     function draw(countries,data)
     {
 
-        //initialize a color country object
-        var cc = {};
         data.forEach(function (d) {
             cc[d["Country"]] = c20c(d["Country"]);
         })
 
-        console.log(cc);
-
-        var country = g.selectAll(".country").data(countries);
+        country = g.selectAll(".country").data(countries);
 
         country.enter().insert("path")
             .attr("class", "country")
@@ -73,7 +77,9 @@ function map(){
             })
             //selection
             .on("click",  function(d) {
-                //...
+                selFeature(d.properties.name);
+                pc1.selectLine(d.properties.name);
+                sp1.selectDot(d.properties.name);
             });
 
     }
@@ -83,16 +89,43 @@ function map(){
 
         var t = d3.event.translate;
         var s = d3.event.scale;
-        
 
         zoom.translate(t);
         g.style("stroke-width", 1 / s).attr("transform", "translate(" + t + ")scale(" + s + ")");
 
     }
-    
-    //method for selecting features of other components
+
+    /**
+     * Public method for selecting a country in the data
+     * @param {string} value - The name of the country selected
+     */
+    this.selectCountry = function(value) {
+        selFeature(value);
+    }
+
+    /**
+     * Method for selecting a country in the data
+     * @param {string} value - The name of the country selected
+     */
     function selFeature(value){
-        //...
+
+        // Reset if same selection
+        if (value === selectedCountry) {
+            selectedCountry = "";
+
+            country
+                .style("fill", function(d) {
+                    return cc[d.properties.name];
+                })
+            return;
+        }
+
+        selectedCountry = value;
+
+        country
+            .style("fill", function(d) {
+                return d.properties.name === value ? cc[d.properties.name] : "#d5d5d5";
+            })
     }
 }
 

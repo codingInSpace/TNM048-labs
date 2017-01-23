@@ -8,7 +8,7 @@ function sp(){
         width = spDiv.width() - margin.right - margin.left,
         height = spDiv.height() - margin.top - margin.bottom;
 
-    var selectedValue = {};
+    var selectedCountry = "";
 
     //initialize color scale
     var c20c = d3.scale.category20c();
@@ -125,7 +125,7 @@ function sp(){
             //tooltip
             .on("mousemove", function(d) {
                 tooltip.transition()
-                    .duration(200)
+                    .duration(100)
                     .style("opacity", .9)
                     .style("left", (d3.event.pageX + 5) + "px")
                     .style("top", (d3.event.pageY - 35) + "px");
@@ -134,16 +134,21 @@ function sp(){
                 highlight(d, true);
             })
             .on("mouseout", function(d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+
                 highlight(d, false);
             })
             .on("click",  function(d) {
-                selFeature(d)
-                pc1.selectLine(d)
+                selFeature(d.Country)
+                pc1.selectLine(d.Country)
+                map.selectCountry(d.Country);
             });
-    }
 
+    }
     //method for selecting the dot from other components
-    this.selectDot = function(value){
+    this.filterDots = function(value){
         svg.selectAll('.dot')
             .style('display', function(d) {
                 return value.actives.every(function(p, i) {
@@ -151,21 +156,32 @@ function sp(){
                 }) ? null : "none";
             });
     };
-    
-    //method for selecting features of other components
+
+    /**
+     * Public method for selecting the polyline for a country in the data range
+     * @param {string} value - The name of the country selected
+     */
+    this.selectDot = function(value) {
+        selFeature(value);
+    }
+
+    /**
+     * Method for selecting the polyline for a country in the data range
+     * @param {string} value - The name of the country selected
+     */
     function selFeature(value){
-        if (value === selectedValue) {
-            selectedValue = {};
+        if (value === selectedCountry) {
+            selectedCountry = "";
             svg.selectAll('.dot')
                 .attr("opacity", 1)
             return
         }
 
-        selectedValue = value;
+        selectedCountry = value;
 
         // Lower opacity for selected dots
         svg.selectAll('.dot')
-            .attr("opacity", function(d) { return d.Country === value.Country ? 1 : 0.3 });
+            .attr("opacity", function(d) { return d.Country === value ? 1 : 0.3 });
     }
 
     /**

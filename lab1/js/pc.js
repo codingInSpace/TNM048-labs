@@ -8,7 +8,7 @@ function pc(){
         width = pcDiv.width() - margin[1] - margin[3],
         height = pcDiv.height() - margin[0] - margin[2];
 
-    var selectedValue = {};
+    var selectedCountry = {};
     
     //initialize color scale
     var c20c = d3.scale.category20c();
@@ -124,27 +124,36 @@ function pc(){
             }) ? null : "none";
         });
 
-        sp1.selectDot({actives: actives, extents: extents});
+        sp1.filterDots({actives: actives, extents: extents});
     }
 
-    //method for selecting the pololyne from other components	
+    /**
+     * Public method for selecting the polyline for a country in the data range
+     * @param {string} value - The name of the country selected
+     */
     this.selectLine = function(value){
         selFeature(value);
     };
-    
-    //method for selecting features of other components
+
+    /**
+     * Method for selecting the polyline for a country in the data range
+     * @param {string} value - The name of the country selected
+     */
     function selFeature(value){
-        if (value === selectedValue) {
-            selectedValue = {};
+
+        // Reset if same selection
+        if (value === selectedCountry) {
+            selectedCountry = "";
+
             foreground
                 .style("display", null)
-            return
+            return;
         }
 
-        selectedValue = value;
+        selectedCountry = value;
 
         foreground
-            .style("display", function(d) { return d["Country"] === value.Country ? null : "none"})
+            .style("display", function(d) { return d["Country"] === value ? null : "none"})
     };
 
 }
