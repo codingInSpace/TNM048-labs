@@ -137,9 +137,11 @@ function pc(){
         if (value === selectedValue) {
             selectedValue = {};
             foreground
-                .attr("opacity", 1)
+                .style("display", null)
             return
         }
+
+        selectedValue = value;
 
         foreground
             .style("display", function(d) { return d["Country"] === value.Country ? null : "none"})

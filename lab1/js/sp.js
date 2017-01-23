@@ -119,7 +119,7 @@ function sp(){
             .attr("cy", function(d) {
               return y(d["Household income"]);
             })
-            .attr("r", 3)
+            .attr("r", 4)
             //Define the x and y coordinate data values for the dots
             //...
             //tooltip
@@ -177,11 +177,11 @@ function sp(){
         if (status === true) {
             svg.selectAll('.dot')
                 .style("fill", function(d) { return d.Country === value.Country ? "white" : cc[d.Country] })
-                .attr("r", function(d) { return d.Country === value.Country ? 5 : 3 });
+                .attr("r", function(d) { return d.Country === value.Country ? 5 : 4 });
         } else {
             svg.selectAll('.dot')
                 .style("fill", function(d) { return cc[d.Country]; })
-                .attr("r", 3 );
+                .attr("r", 4 );
         }
     }
 }
