@@ -34,22 +34,26 @@ function map(){
     d3.json("data/world-topo.topojson", function(error, world) {
         
         var countries = topojson.feature(world, world.objects.countries).features;
-        
-        //load summary data
-        //...
 
-        draw(countries);
-        
+        //load summary data
+        d3.csv("data/OECD-better-life-index-hi.csv", function(err, data) {
+            if (err) console.log(err);
+            draw(countries, data);
+        });
     });
 
     function draw(countries,data)
     {
-        var country = g.selectAll(".country").data(countries);
 
-        //initialize a color country object	
+        //initialize a color country object
         var cc = {};
-		
-        //...
+        data.forEach(function (d) {
+            cc[d["Country"]] = c20c(d["Country"]);
+        })
+
+        console.log(cc);
+
+        var country = g.selectAll(".country").data(countries);
 
         country.enter().insert("path")
             .attr("class", "country")
@@ -57,7 +61,9 @@ function map(){
             .attr("id", function(d) { return d.id; })
             .attr("title", function(d) { return d.properties.name; })
             //country color
-            .style("fill", function(d, i) { return c20c(i); })
+            .style("fill", function(d) {
+                return cc[d.properties.name];
+            })
             //tooltip
             .on("mousemove", function(d) {
                 //...

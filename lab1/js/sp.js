@@ -11,8 +11,11 @@ function sp(){
     var selectedValue = {};
 
     //initialize color scale
-    //...
-    
+    var c20c = d3.scale.category20c();
+
+    //initialize a color country object
+    var cc = {};
+
     //initialize tooltip
     //...
 
@@ -38,21 +41,14 @@ function sp(){
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     //Load data
     d3.csv("data/OECD-better-life-index-hi.csv", function(data) {
         //if (error) console.log(error);
-
         self.data = data;
-        
-        //define the domain of the scatter plot axes
-        //var yMax = d3.max(data, function(d) {
-        //  return d[0];
-        //})
-        //var xMax = d3.max(data, function(d) {
-        //  return d[1];
-        //})
-        //y.domain([0, yMax]);
-        //x.domain([0, xMax]);
 
         x.domain(data.map(function(d) { return d.Country; }));
         y.domain([
@@ -60,6 +56,9 @@ function sp(){
             d3.max(data, function(d) { return d["Household income"]; })
         ]);
 
+        data.forEach(function(d) {
+            cc[d["Country"]] = c20c(d["Country"]);
+        })
         draw();
 
     });
@@ -97,7 +96,6 @@ function sp(){
             .attr("y", 6)
             .attr("dy", ".71em");
 
-
         // Y Title
         svg.append("text")
             .attr("transform", "rotate(-90)")
@@ -112,6 +110,9 @@ function sp(){
             .data(self.data)
             .enter().append("circle")
             .attr("class", "dot")
+            .style("fill", function(d) {
+                return cc[d.Country];
+            })
             .attr("cx", function(d) {
               return x(d.Country);
             })
@@ -123,10 +124,17 @@ function sp(){
             //...
             //tooltip
             .on("mousemove", function(d) {
-                highlight(d, true)
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9)
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 35) + "px");
+                tooltip.html(d.Country);
+
+                highlight(d, true);
             })
             .on("mouseout", function(d) {
-                highlight(d, false)
+                highlight(d, false);
             })
             .on("click",  function(d) {
                 selFeature(d)
@@ -157,7 +165,7 @@ function sp(){
 
         // Lower opacity for selected dots
         svg.selectAll('.dot')
-            .attr("opacity", function(d) { return d.Country === value.Country ? 1 : 0.3 })
+            .attr("opacity", function(d) { return d.Country === value.Country ? 1 : 0.3 });
     }
 
     /**
@@ -168,10 +176,12 @@ function sp(){
     function highlight(value, status){
         if (status === true) {
             svg.selectAll('.dot')
-                .style("fill", function(d) { return d.Country === value.Country ? "cyan" : "black" })
+                .style("fill", function(d) { return d.Country === value.Country ? "white" : cc[d.Country] })
+                .attr("r", function(d) { return d.Country === value.Country ? 5 : 3 });
         } else {
             svg.selectAll('.dot')
-                .style("fill", "black")
+                .style("fill", function(d) { return cc[d.Country]; })
+                .attr("r", 3 );
         }
     }
 }

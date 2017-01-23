@@ -11,8 +11,11 @@ function pc(){
     var selectedValue = {};
     
     //initialize color scale
-    //...
-    
+    var c20c = d3.scale.category20c();
+
+    //initialize a color country object
+    var cc = {};
+
     //initialize tooltip
     //...
 
@@ -37,6 +40,10 @@ function pc(){
 
         //console.log(data)
         self.data = data;
+
+        data.forEach(function(d) {
+            cc[d.Country] = c20c(d.Country);
+        })
 
         // Extract the list of dimensions and create a scale for each.
         //...
@@ -66,10 +73,13 @@ function pc(){
         foreground = svg.append("svg:g")
             .attr("class", "foreground")
             .selectAll("path")
-            //add the data and append the path 
+            //add the data and append the path
             .data(self.data)
             .enter().append("path")
             .attr("d", path)
+            .attr("style", function(d) {
+                return "stroke: " + cc[d.Country];
+            })
             .on("mousemove", function(){})
             .on("mouseout", function(){});
 
