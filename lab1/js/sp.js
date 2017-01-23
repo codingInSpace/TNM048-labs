@@ -71,12 +71,8 @@ function sp(){
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis)
             .selectAll("text")
-                .style("text-anchor", "end")
-                .attr("dx", "-.8em")
-                .attr("dy", ".1em")
-                .attr("transform", function(d) {
-                    return "rotate(-43)"
-                });
+                .style("text-anchor", "center")
+                .attr("dy", "1em");
 
         // X Title
         svg.append("text")
