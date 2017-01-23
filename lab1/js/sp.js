@@ -8,6 +8,8 @@ function sp(){
         width = spDiv.width() - margin.right - margin.left,
         height = spDiv.height() - margin.top - margin.bottom;
 
+    var selectedValue = {};
+
     //initialize color scale
     //...
     
@@ -126,26 +128,52 @@ function sp(){
             //...
             //tooltip
             .on("mousemove", function(d) {
-                //...    
+                highlight(d, true)
             })
             .on("mouseout", function(d) {
-                //...   
+                highlight(d, false)
             })
             .on("click",  function(d) {
-                //...    
+                selFeature(d)
+                pc1.selectLine(d)
             });
     }
 
     //method for selecting the dot from other components
     this.selectDot = function(value){
-        //...
+        selFeature(value)
     };
     
     //method for selecting features of other components
     function selFeature(value){
-        //...
+        if (value === selectedValue) {
+            selectedValue = {};
+            svg.selectAll('.dot')
+                .attr("opacity", 1)
+            return
+        }
+
+        selectedValue = value;
+
+        // Lower opacity for selected dots
+        svg.selectAll('.dot')
+            .attr("opacity", function(d) { return d.country === value.country ? 1 : 0.3 })
     }
 
+    /**
+     * Method for highlighting dot
+     * @param {object} value - Object that was selected
+     * @param {boolean} status - Whether highlight active or not
+     */
+    function highlight(value, status){
+        if (status === true) {
+            svg.selectAll('.dot')
+                .style("fill", function(d) { return d.country === value.country ? "cyan" : "black" })
+        } else {
+            svg.selectAll('.dot')
+                .style("fill", "black")
+        }
+    }
 }
 
 

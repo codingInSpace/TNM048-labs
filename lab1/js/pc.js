@@ -8,6 +8,7 @@ function pc(){
         width = pcDiv.width() - margin[1] - margin[3],
         height = pcDiv.height() - margin[0] - margin[2];
 
+    var selectedValue = {};
     
     //initialize color scale
     //...
@@ -116,12 +117,22 @@ function pc(){
 
     //method for selecting the pololyne from other components	
     this.selectLine = function(value){
-        //...
+        selFeature(value);
     };
     
     //method for selecting features of other components
     function selFeature(value){
-        //...
+        if (value === selectedValue) {
+            selectedValue = {};
+            foreground
+                .attr("opacity", 1)
+            return
+        }
+
+        selectedValue = value;
+
+        foreground
+            .attr("opacity", function(d) { return d["Country"] === value.country ? 1 : 0})
     };
 
 }
