@@ -124,9 +124,18 @@ body {
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
-
-
-
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    min-width: 40px;
+    min-height: 28px;
+    padding: 6px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 4px;
+    pointer-events: none;
+}
 
 /* ==========================================================================
    Helper classes

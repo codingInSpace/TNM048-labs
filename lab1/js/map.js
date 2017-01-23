@@ -21,9 +21,6 @@ function map(){
     //initialize a color country object
     var cc = {};
 
-    //initialize tooltip
-    //...
-
     var projection = d3.geo.mercator()
         .center([50, 60 ])
         .scale(250);
@@ -35,6 +32,10 @@ function map(){
 
     var path = d3.geo.path()
         .projection(projection);
+
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
     g = svg.append("g");
 
@@ -70,10 +71,17 @@ function map(){
             })
             //tooltip
             .on("mousemove", function(d) {
-                //...
+                tooltip.transition()
+                    .style("opacity", .9)
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 35) + "px");
+                tooltip.html(d.properties.name);
+
             })
             .on("mouseout",  function(d) {
-                //...
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
             })
             //selection
             .on("click",  function(d) {

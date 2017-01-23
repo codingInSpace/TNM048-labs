@@ -16,9 +16,6 @@ function sp(){
     //initialize a color country object
     var cc = {};
 
-    //initialize tooltip
-    //...
-
 //    var x = d3.scale.linear()
  //       .range([0, width]);
     var x = d3.scale.ordinal()
@@ -125,7 +122,6 @@ function sp(){
             //tooltip
             .on("mousemove", function(d) {
                 tooltip.transition()
-                    .duration(100)
                     .style("opacity", .9)
                     .style("left", (d3.event.pageX + 5) + "px")
                     .style("top", (d3.event.pageY - 35) + "px");
@@ -137,7 +133,7 @@ function sp(){
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
-
+                
                 highlight(d, false);
             })
             .on("click",  function(d) {

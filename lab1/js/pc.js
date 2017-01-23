@@ -16,9 +16,6 @@ function pc(){
     //initialize a color country object
     var cc = {};
 
-    //initialize tooltip
-    //...
-
     var x = d3.scale.ordinal().rangePoints([0, width], 1),
         y = {};
         
@@ -33,6 +30,10 @@ function pc(){
         .attr("height", height + margin[0] + margin[2])
         .append("svg:g")
         .attr("transform", "translate(" + margin[3] + "," + margin[0] + ")");
+
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
     //Load data
     d3.csv("data/OECD-better-life-index-hi.csv", function(error, data) {
@@ -80,8 +81,18 @@ function pc(){
             .attr("style", function(d) {
                 return "stroke: " + cc[d.Country];
             })
-            .on("mousemove", function(){})
-            .on("mouseout", function(){});
+            .on("mousemove", function(d){
+                tooltip.transition()
+                    .style("opacity", .9)
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 35) + "px");
+                tooltip.html(d.Country);
+            })
+            .on("mouseout", function(d){
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
 
         // Add a group element for each dimension.
         var g = svg.selectAll(".dimension")
@@ -89,7 +100,7 @@ function pc(){
             .enter().append("svg:g")
             .attr("class", "dimension")
             .attr("transform", function(d) { return "translate(" + x(d) + ")"; });
-            
+
         // Add an axis and title.
         g.append("svg:g")
             .attr("class", "axis")
