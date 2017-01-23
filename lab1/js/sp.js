@@ -45,8 +45,6 @@ function sp(){
           householdIncome: +data["Household income"]
       };
     }, function(data) {
-        console.log(data)
-        console.log(data[3].householdIncome)
         self.data = data;
         
         //define the domain of the scatter plot axes

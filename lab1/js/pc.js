@@ -31,16 +31,19 @@ function pc(){
         .attr("transform", "translate(" + margin[3] + "," + margin[0] + ")");
 
     //Load data
-    d3.csv("data/OECD-better-life-index-hi.csv", function(data) {
+    d3.csv("data/OECD-better-life-index-hi.csv", function(error, data) {
+        if (error) console.log(error);
 
+        //console.log(data)
         self.data = data;
 
         // Extract the list of dimensions and create a scale for each.
         //...
-        x.domain(dimensions = d3.keys([0,1,2,3,4]).filter(function(d) {
-            return [(y[d] = d3.scale.linear()
-                .domain(d3.extent([0,1]))
-                .range([height, 0]))];
+        x.domain(dimensions = d3.keys(data[0]).filter(function(i) {
+            if (i !== "Country")
+                return [(y[i] = d3.scale.linear()
+                    .domain(d3.extent(data, function(d) { return +d[i]; }))
+                    .range([height, 0]))];
         }));
 
         draw();
@@ -51,8 +54,10 @@ function pc(){
         background = svg.append("svg:g")
             .attr("class", "background")
             .selectAll("path")
-            //add the data and append the path 
-            //...
+            //add the data and append the path
+            .data(self.data)
+            .enter().append("path")
+            .attr("d", path)
             .on("mousemove", function(d){})
             .on("mouseout", function(){});
 
@@ -61,7 +66,9 @@ function pc(){
             .attr("class", "foreground")
             .selectAll("path")
             //add the data and append the path 
-            //...
+            .data(self.data)
+            .enter().append("path")
+            .attr("d", path)
             .on("mousemove", function(){})
             .on("mouseout", function(){});
 
@@ -76,6 +83,7 @@ function pc(){
         g.append("svg:g")
             .attr("class", "axis")
             //add scale
+            .each(function(d) { d3.select(this).call(axis.scale(y[d])); })
             .append("svg:text")
             .attr("text-anchor", "middle")
             .attr("y", -9)
