@@ -40,13 +40,8 @@ function sp(){
 
     //Load data
     d3.csv("data/OECD-better-life-index-hi.csv", function(data) {
-      //if (error) console.log(error);
+        //if (error) console.log(error);
 
-      return {
-          country: data.Country,
-          householdIncome: +data["Household income"]
-      };
-    }, function(data) {
         self.data = data;
         
         //define the domain of the scatter plot axes
@@ -59,10 +54,10 @@ function sp(){
         //y.domain([0, yMax]);
         //x.domain([0, xMax]);
 
-        x.domain(data.map(function(d) { return d.country; }));
+        x.domain(data.map(function(d) { return d.Country; }));
         y.domain([
-            d3.min(data, function(d) { return d.householdIncome; }),
-            d3.max(data, function(d) { return d.householdIncome; })
+            d3.min(data, function(d) { return d["Household income"]; }),
+            d3.max(data, function(d) { return d["Household income"]; })
         ]);
 
         draw();
@@ -118,10 +113,10 @@ function sp(){
             .enter().append("circle")
             .attr("class", "dot")
             .attr("cx", function(d) {
-              return x(d.country);
+              return x(d.Country);
             })
             .attr("cy", function(d) {
-              return y(d.householdIncome);
+              return y(d["Household income"]);
             })
             .attr("r", 3)
             //Define the x and y coordinate data values for the dots
@@ -141,7 +136,12 @@ function sp(){
 
     //method for selecting the dot from other components
     this.selectDot = function(value){
-        selFeature(value)
+        svg.selectAll('.dot')
+            .style('display', function(d) {
+                return value.actives.every(function(p, i) {
+                    return value.extents[i][0] <= d[p] && d[p] <= value.extents[i][1];
+                }) ? null : "none";
+            });
     };
     
     //method for selecting features of other components
@@ -157,7 +157,7 @@ function sp(){
 
         // Lower opacity for selected dots
         svg.selectAll('.dot')
-            .attr("opacity", function(d) { return d.country === value.country ? 1 : 0.3 })
+            .attr("opacity", function(d) { return d.Country === value.Country ? 1 : 0.3 })
     }
 
     /**
@@ -168,7 +168,7 @@ function sp(){
     function highlight(value, status){
         if (status === true) {
             svg.selectAll('.dot')
-                .style("fill", function(d) { return d.country === value.country ? "cyan" : "black" })
+                .style("fill", function(d) { return d.Country === value.Country ? "cyan" : "black" })
         } else {
             svg.selectAll('.dot')
                 .style("fill", "black")

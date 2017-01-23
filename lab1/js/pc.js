@@ -113,6 +113,8 @@ function pc(){
                 return extents[i][0] <= d[p] && d[p] <= extents[i][1];
             }) ? null : "none";
         });
+
+        sp1.selectDot({actives: actives, extents: extents});
     }
 
     //method for selecting the pololyne from other components	
@@ -129,10 +131,8 @@ function pc(){
             return
         }
 
-        selectedValue = value;
-
         foreground
-            .attr("opacity", function(d) { return d["Country"] === value.country ? 1 : 0})
+            .style("display", function(d) { return d["Country"] === value.Country ? null : "none"})
     };
 
 }
