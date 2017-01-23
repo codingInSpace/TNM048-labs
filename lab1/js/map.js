@@ -11,8 +11,8 @@ function map(){
         height = mapDiv.height() - margin.top - margin.bottom;
 
     //initialize color scale
-    //...
-    
+    var c20c = d3.scale.category20c();
+
     //initialize tooltip
     //...
 
@@ -57,7 +57,7 @@ function map(){
             .attr("id", function(d) { return d.id; })
             .attr("title", function(d) { return d.properties.name; })
             //country color
-            //...
+            .style("fill", function(d, i) { return c20c(i); })
             //tooltip
             .on("mousemove", function(d) {
                 //...
