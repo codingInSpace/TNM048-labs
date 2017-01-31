@@ -33,13 +33,24 @@ function kmeans(data, k) {
   // initialize items from data
   var items = data.map(function(values) { return new Item(values) });
 
-  for (var it = 0; it < iterations; ++it) {
+  var qualityMeasure = 99999999999999;
+
+  // Main loop
+  while(true) {
+    var prevQualityMeasure = qualityMeasure;
     for (var item of items) {
       item.updateClosestCentroid(centroids);
     };
+    qualityMeasure = 0.0;
     for (var centroid of centroids) {
       centroid.updateValues(items);
+      qualityMeasure += centroid.sumOfConnectedItemDistances;
     };
+
+    //console.log('current: ' + qualityMeasure + ', prev: ' + prevQualityMeasure);
+    //console.log(qualityMeasure < prevQualityMeasure);
+    if (qualityMeasure < prevQualityMeasure)
+      break;
   }
 
   var newData = [];
@@ -59,6 +70,7 @@ function Item(values) {
   var self = this;
   this.dimValues = values;
   this.nearestCentroidIndex = -1;
+  this.distToNearestCentroid = 0.0;
   this.colorIndex = 0;
   this.print = function() {
     console.log(this.dimValues);
@@ -76,6 +88,8 @@ function Item(values) {
       diffs.forEach(function(diff) {
         sum += diff;
       });
+
+      self.distToNearestCentroid = sum;
 
       return Math.sqrt(sum);
     });
@@ -98,11 +112,15 @@ function Centroid(initialValues, index) {
   var self = this;
   this.dimValues = initialValues;
   this.index = parseFloat(index);
+  this.sumOfConnectedItemDistances = 0.0;
   this.print = function() {
     console.log(this.dimValues);
   };
   this.updateValues = function(items) {
-    var itemsWithThisCentroid = items.filter(function(item) { return item.nearestCentroidIndex === self.index });
+    var itemsWithThisCentroid = items.filter(function(item) {
+      return item.nearestCentroidIndex === self.index
+    });
+
     if (itemsWithThisCentroid.length > 0) {
 
       // Compute new average dim values for this centroid
@@ -111,7 +129,14 @@ function Centroid(initialValues, index) {
         initialObject[key] = 0;
       }
 
-      var clusterDimValues = itemsWithThisCentroid.map(function(item) { return item.dimValues });
+      self.sumOfConnectedItemDistances = 0.0; // Reset distances
+      var clusterDimValues = itemsWithThisCentroid.map(function(item) {
+
+        // Update distances of all clustered items while at it
+        self.sumOfConnectedItemDistances += item.distToNearestCentroid;
+        return item.dimValues
+      });
+
       var dataKeys = Object.keys(clusterDimValues[0]);
       var newValues = {};
 
@@ -125,7 +150,6 @@ function Centroid(initialValues, index) {
       }
 
       for (var i in clusterDimValues) {
-
         for (var j in dataKeys) {
           itemValues[j] += parseFloat(Object.values(clusterDimValues[i])[j]);
         }
