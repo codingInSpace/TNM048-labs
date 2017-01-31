@@ -40,21 +40,24 @@ function pc(){
         self.data = data;
         
         var k = 3;
-        var kmeansRes = kmeans(data,k);
-        
+        data = kmeans(data,k);
+
+        console.log(data);
         //initialize the cluster colors
         //...
         
-        draw(kmeansRes);
+        draw(data);
     });
 
-    function draw(kmeansRes){
-        
+    function draw(data){
+        //initialize color scale
+        var c20c = d3.scale.category10();
+
         // Add grey background lines for context.
         background = svg.append("svg:g")
             .attr("class", "background")
             .selectAll("path")
-            .data(self.data)
+            .data(data)
             .enter().append("svg:path")
             .attr("d", path);
                 
@@ -62,10 +65,12 @@ function pc(){
         foreground = svg.append("svg:g")
             .attr("class", "foreground")
             .selectAll("path")
-            .data(self.data)
+            .data(data)
             .enter().append("svg:path")
             .attr("d", path)
-            .style("stroke", function(d) { return "hsl(" + Math.random() * 360 + ",100%,50%)"; }); 
+            .style("stroke", function(d) {
+                return c20c(d.colorIndex);
+            });
     
             //Assign the cluster colors
             //..

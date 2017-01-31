@@ -6,19 +6,20 @@
  */
 
 function kmeans(data, k) {
-  var centroids = [];
   var iterations = 10;
 
-  var min = 0.0, max = 1.0, amountValues = 3;
+  var min = 99999999999, max = -min, amountValues = 3;
 
   // Set min and max values
   for (var i = 0; i < data.length; ++i) {
     for (var j = 0; j < Object.values(data[i]).length; ++j) {
-      var value = Object.values(data[i])[j];
+      var value = parseFloat(Object.values(data[i])[j]);
       min = (value < min) ? value : min;
       max = (value > max) ? value : max;
     }
   }
+
+  console.log('min max: ' + min + ' ' + max)
 
   // The keys of a data item
   var dataKeys = Object.keys(data[0]);
@@ -27,12 +28,7 @@ function kmeans(data, k) {
 
   // Randomly set values within range and determine initial centroids
   for (var i = 0; i < k; ++i) {
-    var dim = {}
-
-    for (var j = 0; j < dataKeys.length; ++j) {
-      var value = Math.random() * (max - -min) - min; //random value in range
-      dim[ dataKeys[j] ] = value;
-    }
+    var dim = data[Math.floor(Math.random() * data.length)];
     centroids.push( new Centroid(dim, i));
   }
 
@@ -43,26 +39,33 @@ function kmeans(data, k) {
 
   items[0].print();
 
-  // Assign each data item to closest cluster
-  //for (var i = 0; i < data.length; ++i) {
-  //  var value = 0;
-  //  for (var j = 0; j < amountValues; ++j) {
-  //    value += Object.values(data[i])[j] - Object.values(centroids[j])
-  //  }
-  //}
-
-  for (var it = 0; it < 1; ++it) {
-    items.forEach(function(item) {
+  for (var it = 0; it < iterations; ++it) {
+    for (var item of items) {
       item.updateClosestCentroid(centroids);
-    });
+    };
+    for (var centroid of centroids) {
+      centroid.updateValues(items);
+    };
   }
 
+  var newData = [];
+  for (let item of items) {
+    var values = {};
+    for (let key in item.dimValues) {
+      values[key] = item.dimValues[key];
+    }
+    values.colorIndex = item.colorIndex;
+    newData.push(values);
+  }
+
+  return newData;
 };
 
 function Item(values) {
   var self = this;
   this.dimValues = values;
-  this.closestCentroidIndex = -1;
+  this.nearestCentroidIndex = -1;
+  this.colorIndex = 0;
   this.print = function() {
     console.log(this.dimValues);
   };
@@ -73,7 +76,7 @@ function Item(values) {
       for (var key in self.dimValues) {
         var itemValue = self.dimValues[key];
         var centroidValue = centroid.dimValues[key];
-        diffs.push( Math.pow(itemValue - centroidValue, 2));
+        diffs.push( Math.pow(itemValue - centroidValue, 2) );
       }
 
       diffs.forEach(function(diff) {
@@ -82,9 +85,6 @@ function Item(values) {
 
       return Math.sqrt(sum);
     });
-
-    //console.log('euq distances:');
-    //console.log(euqDistances);
 
     var currentVal = euqDistances[0];
     var nearestIdx = 0;
@@ -96,7 +96,8 @@ function Item(values) {
     }
 
     //console.log(nearestIdx);
-    self.closestCentroidIndex = nearestIdx;
+    self.nearestCentroidIndex = nearestIdx;
+    self.colorIndex = parseFloat(nearestIdx)+1;
   };
 }
 
@@ -104,8 +105,53 @@ function Centroid(initialValues, index) {
   var self = this;
   this.dimValues = initialValues;
   this.index = index;
-  this.updateValues = '';
   this.print = function() {
     console.log(this.dimValues);
+  };
+  this.updateValues = function(items) {
+    var itemsWithThisCentroid = items.filter(function(item) { return item.nearestCentroidIndex == self.index });
+    if (itemsWithThisCentroid.length > 0) {
+
+      // Compute new average dim values for this centroid
+      var initialObject = {};
+      for (var key in items[0].dimValues) {
+        initialObject[key] = 0;
+      }
+
+      var clusterDimValues = itemsWithThisCentroid.map(function(item) { return item.dimValues });
+      var dataKeys = Object.keys(clusterDimValues[0]);
+      var newValues = {};
+
+      for (var i in dataKeys) {
+        newValues[dataKeys[i]] = 0;
+      }
+
+      console.log(newValues);
+
+      var itemValues = [];
+      for (var j in dataKeys) {
+        itemValues.push(0);
+      }
+
+      for (var i in clusterDimValues) {
+
+        for (var j in dataKeys) {
+          itemValues[j] += parseFloat(Object.values(clusterDimValues[i])[j]);
+          //console.log(itemValues[j]);
+        }
+      }
+
+      for (var i in itemValues) {
+        itemValues[i] = itemValues[i]/itemsWithThisCentroid.length;
+      }
+
+      console.log(itemValues);
+
+      for (var i in dataKeys) {
+        newValues[dataKeys[i]] = itemValues[i];
+      }
+
+      self.dimValues = newValues;
+    }
   };
 }
