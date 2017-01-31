@@ -19,8 +19,6 @@ function kmeans(data, k) {
     }
   }
 
-  console.log('min max: ' + min + ' ' + max)
-
   // The keys of a data item
   var dataKeys = Object.keys(data[0]);
 
@@ -32,12 +30,8 @@ function kmeans(data, k) {
     centroids.push( new Centroid(dim, i));
   }
 
-  console.log(centroids);
-
   // initialize items from data
   var items = data.map(function(values) { return new Item(values) });
-
-  items[0].print();
 
   for (var it = 0; it < iterations; ++it) {
     for (var item of items) {
@@ -125,8 +119,6 @@ function Centroid(initialValues, index) {
         newValues[dataKeys[i]] = 0;
       }
 
-      console.log(newValues);
-
       var itemValues = [];
       for (var j in dataKeys) {
         itemValues.push(0);
@@ -136,15 +128,12 @@ function Centroid(initialValues, index) {
 
         for (var j in dataKeys) {
           itemValues[j] += parseFloat(Object.values(clusterDimValues[i])[j]);
-          //console.log(itemValues[j]);
         }
       }
 
       for (var i in itemValues) {
         itemValues[i] = itemValues[i]/itemsWithThisCentroid.length;
       }
-
-      console.log(itemValues);
 
       for (var i in dataKeys) {
         newValues[dataKeys[i]] = itemValues[i];
