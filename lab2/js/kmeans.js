@@ -95,8 +95,7 @@ function Item(values) {
       }
     }
 
-    //console.log(nearestIdx);
-    self.nearestCentroidIndex = nearestIdx;
+    self.nearestCentroidIndex = parseFloat(nearestIdx);
     self.colorIndex = parseFloat(nearestIdx)+1;
   };
 }
@@ -104,12 +103,12 @@ function Item(values) {
 function Centroid(initialValues, index) {
   var self = this;
   this.dimValues = initialValues;
-  this.index = index;
+  this.index = parseFloat(index);
   this.print = function() {
     console.log(this.dimValues);
   };
   this.updateValues = function(items) {
-    var itemsWithThisCentroid = items.filter(function(item) { return item.nearestCentroidIndex == self.index });
+    var itemsWithThisCentroid = items.filter(function(item) { return item.nearestCentroidIndex === self.index });
     if (itemsWithThisCentroid.length > 0) {
 
       // Compute new average dim values for this centroid
