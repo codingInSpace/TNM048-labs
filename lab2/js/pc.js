@@ -39,7 +39,7 @@ function pc(){
         
         self.data = data;
         
-        var k = 3;
+        var k = 2;
         data = kmeans(data,k);
 
         console.log(data);

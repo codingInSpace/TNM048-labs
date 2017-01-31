@@ -36,6 +36,7 @@ function kmeans(data, k) {
   var qualityMeasure = 99999999999999;
 
   // Main loop
+  var iterations = 0;
   while(true) {
     var prevQualityMeasure = qualityMeasure;
     for (var item of items) {
@@ -49,8 +50,12 @@ function kmeans(data, k) {
 
     //console.log('current: ' + qualityMeasure + ', prev: ' + prevQualityMeasure);
     //console.log(qualityMeasure < prevQualityMeasure);
-    if (qualityMeasure < prevQualityMeasure)
-      break;
+    if (qualityMeasure > prevQualityMeasure) break;
+
+    iterations++;
+
+    // Max value
+    if (iterations > 15) break;
   }
 
   var newData = [];
@@ -63,6 +68,7 @@ function kmeans(data, k) {
     newData.push(values);
   }
 
+  console.log('Centroid iterations: ' + iterations);
   return newData;
 };
 
