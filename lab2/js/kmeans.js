@@ -6,18 +6,6 @@
  */
 
 function kmeans(data, k) {
-  var iterations = 10;
-
-  var min = 99999999999, max = -min, amountValues = 3;
-
-  // Set min and max values
-  for (var i = 0; i < data.length; ++i) {
-    for (var j = 0; j < Object.values(data[i]).length; ++j) {
-      var value = parseFloat(Object.values(data[i])[j]);
-      min = (value < min) ? value : min;
-      max = (value > max) ? value : max;
-    }
-  }
 
   // The keys of a data item
   var dataKeys = Object.keys(data[0]);
@@ -54,7 +42,7 @@ function kmeans(data, k) {
 
     iterations++;
 
-    // Max value
+    // Max value base case
     if (iterations > 15) break;
   }
 
