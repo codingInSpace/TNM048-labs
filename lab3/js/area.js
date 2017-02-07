@@ -11,7 +11,7 @@ function area(data) {
             height2 = areaDiv.height() - margin2.top - margin2.bottom;
 
     //Sets the data format
-    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ");
+    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ").parse;
 
     //Sets the scales 
     var x = d3.time.scale().range([0, width]),
@@ -32,21 +32,17 @@ function area(data) {
     //Creates the big chart
     var area = d3.svg.area()
             .interpolate("step")
-            .x(d => { return x(format(d['time'])) } )
+            .x(d => { return x(format(d.time)) } )
             .y0(height)
-            .y1(d => { return x(format(d['mag'])) });
+            .y1(d => { return y(parseFloat(d.mag)) });
     
     //Creates the small chart        
         var area2 = d3.svg.area()
             .interpolate("step")
-            .x(function (d) {
-                return 10;//Complete the code
-            })
+            .x(d => { return x2(format(d.time)) })
             .y0(height2)
-            .y1(function (d) {
-                return 10;//Complete the code
-            });
-    
+            .y1(d => { return y2(parseFloat(d.mag)) });
+
     //Assings the svg canvas to the area div
     var svg = d3.select("#area").append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -68,9 +64,12 @@ function area(data) {
             .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
     //Initializes the axis domains for the big chart
-    x.domain([10,10]);//Complete the code
-    y.domain([4, 10]);//Complete the code
-    //Initializes the axis domains for the small chart
+    x.domain(d3.extent(data.map(d => { return format(d.time) })));
+    y.domain([0, d3.max(data, d => { return parseFloat(d.mag) })]);
+    //y.domain(d3.extent(data.map( d => { return parseFloat(d.mag) }))); start at lowest bound
+
+
+  //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
 
