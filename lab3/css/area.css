@@ -3,11 +3,13 @@ svg {
 }
 
 path {
-  fill: orange;
+  /*fill: orange;*/
+  fill: #31a354;
 }
 
 .dot {
-    fill: orange;
+    /*fill: orange;*/
+      fill: #31a354;
     /*fill-opacity: 0.5;*/
     /*stroke: #FFF;*/
 }

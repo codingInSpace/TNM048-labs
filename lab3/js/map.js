@@ -55,10 +55,18 @@ function map(data) {
 
     //Formats the data in a feature collection
     function geoFormat(array) {
-        var data = [];
-        array.map(function (d, i) {
-            //Complete the code
-        });
+        const data = [];
+        array.map(d => {
+          const feature = {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [d.lon, d.lat]
+            }
+          }
+          data.push(feature)
+        })
+
         return data;
     }
 
@@ -75,7 +83,12 @@ function map(data) {
                 .style("stroke", "white");
 
         //draw point        
-        var point //Complete the code
+        var point = g.selectAll("path")
+          .data(geoData.features)
+          .enter()
+          .append("path")
+          .classed("point", true)
+          .attr("d", path);
     };
 
     //Filters data points according to the specified magnitude
@@ -100,7 +113,7 @@ function map(data) {
         var s = d3.event.scale;
 
         zoom.translate(t);
-        g.style("stroke-width", 1 / s).attr("transform", "translate(" + t + ")scale(" + s + ")");
+        g.style('stroke-width', 1 / s).attr(`transform, translate(${t}) scale(${s})`);
     }
 
     //Prints features attributes

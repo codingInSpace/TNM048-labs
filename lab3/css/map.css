@@ -1,7 +1,8 @@
 .country{ fill: rgb(0, 75, 151); }
 
 .point {
-    fill: orange;
+    /*fill: orange;*/
+    fill: #31a354;
     /*stroke: #FFF;*/
 }
 

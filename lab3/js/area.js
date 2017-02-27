@@ -64,8 +64,8 @@ function area(data) {
             .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
     //Initializes the axis domains for the big chart
-    x.domain(d3.extent(data.map(d => { return format(d.time) })));
-    y.domain([0, d3.max(data, d => { return parseFloat(d.mag) })]);
+    x.domain(d3.extent(data.map(d => format(d.time))));
+    y.domain(d3.extent(data.map(d => parseFloat(d.mag))));
     //y.domain(d3.extent(data.map( d => { return parseFloat(d.mag) }))); start at lowest bound
 
 
