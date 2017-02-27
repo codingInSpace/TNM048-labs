@@ -66,7 +66,9 @@ function map(data) {
               coordinates: [lon, lat]
             },
             time,
-            mag
+            mag,
+            filteredTime: false,
+            filteredMag: false
           }
           data.push(feature)
         })
@@ -97,12 +99,12 @@ function map(data) {
 
     //Filters data points according to the specified magnitude
     function filterMag(value) {
-      console.log(value)
       svg.selectAll('.point')
         .style('display', d => {
           const mag = parseFloat(d.mag)
           const shouldShow = mag >= value
-          return shouldShow ? null : 'none'
+          d.filteredMag = shouldShow ? false : true
+          return (!d.filteredTime && !d.filteredMag) ? null : 'none'
         })
     }
     
@@ -115,7 +117,8 @@ function map(data) {
         .style('display', d => {
           const time = format.parse(d.time)
           const shouldShow = time > t1 && time <= t2
-          return shouldShow ? null : 'none'
+          d.filteredTime = shouldShow ? false : true
+          return (!d.filteredTime && !d.filteredMag) ? null : 'none'
         })
     };
 
@@ -136,8 +139,9 @@ function map(data) {
 
     //Prints features attributes
     function printInfo(value) {
-        var elem = document.getElementById('info');
-        elem.innerHTML = "Place: " + value["place"] + " / Depth: " + value["depth"] + " / Magnitude: " + value["mag"] + "&nbsp;";
+        const elem = document.getElementById('info');
+        const { place, depth, mag } = value
+        elem.innerHTML = `Place: ${place} / Depth: ${depth} / Magnitude: ${mag} &nbsp;`;
     }
 
 }
