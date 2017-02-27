@@ -58,14 +58,15 @@ function map(data) {
         const data = []
 
         array.map(d => {
-          const { lat, lon, time } = d
+          const { lat, lon, time, mag } = d
           const feature = {
             type: 'Feature',
             geometry: {
               type: 'Point',
               coordinates: [lon, lat]
             },
-            time
+            time,
+            mag
           }
           data.push(feature)
         })
@@ -96,7 +97,13 @@ function map(data) {
 
     //Filters data points according to the specified magnitude
     function filterMag(value) {
-        //Complete the code
+      console.log(value)
+      svg.selectAll('.point')
+        .style('display', d => {
+          const mag = parseFloat(d.mag)
+          const shouldShow = mag >= value
+          return shouldShow ? null : 'none'
+        })
     }
     
     //Filters data points according to the specified time window
