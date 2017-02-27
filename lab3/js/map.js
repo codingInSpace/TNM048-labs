@@ -55,14 +55,17 @@ function map(data) {
 
     //Formats the data in a feature collection
     function geoFormat(array) {
-        const data = [];
+        const data = []
+
         array.map(d => {
+          const { lat, lon, time } = d
           const feature = {
             type: 'Feature',
             geometry: {
               type: 'Point',
-              coordinates: [d.lon, d.lat]
-            }
+              coordinates: [lon, lat]
+            },
+            time
           }
           data.push(feature)
         })
@@ -98,7 +101,15 @@ function map(data) {
     
     //Filters data points according to the specified time window
     this.filterTime = function (value) {
-        //Complete the code
+      const t1 = value[0]
+      const t2 = value[1]
+
+      svg.selectAll('.point')
+        .style('display', d => {
+          const time = format.parse(d.time)
+          const shouldShow = time > t1 && time <= t2
+          return shouldShow ? null : 'none'
+        })
     };
 
     //Calls k-means function and changes the color of the points  
