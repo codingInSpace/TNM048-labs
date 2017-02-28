@@ -20,8 +20,6 @@ function map(data) {
         return format.parse(d.time);
     }));
 
-    var filterdData = data;
-
     //Sets the colormap
     var colors = colorbrewer.Set3[10];
 
