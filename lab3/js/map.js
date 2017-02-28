@@ -1,4 +1,5 @@
 function map(data) {
+    let points;
 
     var zoom = d3.behavior.zoom()
             .scaleExtent([0.5, 8])
@@ -89,7 +90,7 @@ function map(data) {
                 .style("stroke", "white");
 
         //draw point        
-        var point = g.selectAll("path")
+        points = g.selectAll("path")
           .data(geoData.features)
           .enter()
           .append("path")
@@ -124,8 +125,28 @@ function map(data) {
 
     //Calls k-means function and changes the color of the points  
     this.cluster = function () {
-        //Complete the code
-    };
+      const k = parseInt(document.getElementById('k').value)
+      const filteredData = []
+      const dataPoints = geoData.features
+
+      for (var i in dataPoints) {
+        if (!dataPoints[i].filteredMag && !dataPoints[i].filteredTime)
+          filteredData.push(dataPoints[i])
+      }
+
+      const clusteredData = kmeans(filteredData, k)
+
+      const indexArray = []
+
+      for (var i in clusteredData) {
+        //console.log(clusteredData[i].colorIndex)
+        if (!indexArray.includes(clusteredData[i].colorIndex)) {
+          indexArray.push(clusteredData[i].colorIndex)
+        }
+      }
+
+      console.log(indexArray)
+    }
 
     //Zoom and panning method
     function move() {

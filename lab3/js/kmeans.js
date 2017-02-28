@@ -14,12 +14,20 @@ function kmeans(data, k) {
 
   // Randomly set values within range and determine initial centroids
   for (var i = 0; i < k; ++i) {
-    var dim = data[Math.floor(Math.random() * data.length)];
+    const dataItem = data[Math.floor(Math.random() * data.length)];
+    const dim = dataItem.geometry.coordinates
+    for (var j in dim) {
+      const parsedVal = parseFloat(dim[j])
+      dim[j] = parsedVal
+    }
     centroids.push( new Centroid(dim, i));
   }
 
   // initialize items from data
-  var items = data.map(function(values) { return new Item(values) });
+  const items = data.map(d => {
+    //const values = d.geometry.coordinates
+    return new Item(d)
+  })
 
   var qualityMeasure = 99999999999999;
 
@@ -43,7 +51,7 @@ function kmeans(data, k) {
     iterations++;
 
     // Max value base case
-    if (iterations > 15) break;
+    if (iterations > 7) break;
   }
 
   var newData = [];
@@ -60,8 +68,15 @@ function kmeans(data, k) {
   return newData;
 };
 
-function Item(values) {
+function Item(d) {
   var self = this;
+
+  const values = d.geometry.coordinates
+  for (var i in values) {
+    const parsedVal = parseFloat(values[i])
+    values[i] = parsedVal
+  }
+
   this.dimValues = values;
   this.nearestCentroidIndex = -1;
   this.distToNearestCentroid = 0.0;
