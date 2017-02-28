@@ -61,6 +61,7 @@ function kmeans(data, k) {
       values[key] = item.dimValues[key];
     }
     values.colorIndex = item.colorIndex;
+    values.id = item.id;
     newData.push(values);
   }
 
@@ -70,6 +71,7 @@ function kmeans(data, k) {
 
 function Item(d) {
   var self = this;
+  this.id = d.id;
 
   const values = d.geometry.coordinates
   for (var i in values) {

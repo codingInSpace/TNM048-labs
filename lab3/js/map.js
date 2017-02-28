@@ -1,5 +1,6 @@
 function map(data) {
     let points;
+    let isClustered = false;
 
     var zoom = d3.behavior.zoom()
             .scaleExtent([0.5, 8])
@@ -59,13 +60,14 @@ function map(data) {
         const data = []
 
         array.map(d => {
-          const { lat, lon, time, mag } = d
+          const { lat, lon, id, time, mag } = d
           const feature = {
             type: 'Feature',
             geometry: {
               type: 'Point',
               coordinates: [lon, lat]
             },
+            id,
             time,
             mag,
             filteredTime: false,
@@ -114,6 +116,9 @@ function map(data) {
       const t1 = value[0]
       const t2 = value[1]
 
+      if (isClustered)
+        clearColors()
+
       svg.selectAll('.point')
         .style('display', d => {
           const time = format.parse(d.time)
@@ -122,6 +127,12 @@ function map(data) {
           return (!d.filteredTime && !d.filteredMag) ? null : 'none'
         })
     };
+
+    function clearColors() {
+      points.each(function(d) {
+        d3.select(this).style("fill", null);
+      })
+    }
 
     //Calls k-means function and changes the color of the points  
     this.cluster = function () {
@@ -135,17 +146,18 @@ function map(data) {
       }
 
       const clusteredData = kmeans(filteredData, k)
+      const colors = d3.scale.category20();
 
-      const indexArray = []
-
-      for (var i in clusteredData) {
-        //console.log(clusteredData[i].colorIndex)
-        if (!indexArray.includes(clusteredData[i].colorIndex)) {
-          indexArray.push(clusteredData[i].colorIndex)
+      // Update colors
+      points.each(function(d) {
+        for (var i in clusteredData) {
+          if (d.id === clusteredData[i].id) {
+            d3.select(this).style("fill", colors(clusteredData[i].colorIndex));
+          }
         }
-      }
+      })
 
-      console.log(indexArray)
+      isClustered = true;
     }
 
     //Zoom and panning method
